@@ -1,0 +1,20 @@
+{
+  "name": "gate-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "S4.06 fixture: a minimal full-toolchain project the gate-runner image runs the gates/standard.v1 validators against. Versions pinned to match the devSwarm workspace so the image hosts exactly the lockfile-pinned tools.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "2.1.9",
+    "eslint": "9.39.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.61.1",
+    "vitest": "2.1.9"
+  }
+}
