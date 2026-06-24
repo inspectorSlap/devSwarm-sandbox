@@ -1,0 +1,43 @@
+# S6.06 — the representative deploy-on-merge workflow for the devSwarm-sandbox repo.
+#
+# Source of truth lives here (core repo, reviewable); it is deployed to the sandbox repo at
+# `.github/workflows/deploy.yml` via a PR Brian merges (a one-time setup, like the App gate).
+# It runs on a merge to main (build + test + a STUBBED deploy) and reports a conclusion the Director
+# reconciles (S6.06): success → node done; failure → rollback-to-known-good + page the human.
+#
+# `workflow_dispatch` lets the Director re-deploy the last known-good SHA — the Phase-0 representation
+# of rollback-to-known-good (a live staging target + a real revert is Phase 1).
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit/ref to (re)deploy — used by rollback-to-known-good'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Pinned by tag for the representative workflow; digest-pinning is a Phase-1 supply-chain item.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.sha }}
+
+      - name: Build (representative)
+        run: echo "build OK for ${{ github.event.inputs.ref || github.sha }}"
+
+      - name: Test (representative)
+        run: echo "test OK"
+
+      - name: Deploy to staging (stubbed)
+        run: |
+          echo "deploying ${{ github.event.inputs.ref || github.sha }} to staging (stubbed)"
+          echo "a live staging target is a Phase-1 upgrade"
