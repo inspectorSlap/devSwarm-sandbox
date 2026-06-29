@@ -1,3 +1,3 @@
 export function square(n: number): number {
-  return n;
+  return n * n;
 }
