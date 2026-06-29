@@ -1,3 +1,3 @@
 export function cube(n: number): number {
-  return n;
+  return n * n * n;
 }
