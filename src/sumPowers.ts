@@ -1,3 +1,6 @@
+import { square } from './square';
+import { cube } from './cube';
+
 export function sumPowers(n: number): number {
-  return n;
+  return square(n) + cube(n);
 }
