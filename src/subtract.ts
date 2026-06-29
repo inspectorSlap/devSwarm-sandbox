@@ -1,3 +1,3 @@
 export function subtract(a: number, b: number): number {
-  return 0;
+  return a - b;
 }
