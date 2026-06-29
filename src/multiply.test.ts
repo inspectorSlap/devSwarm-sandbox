@@ -6,7 +6,7 @@ describe('multiply', () => {
     expect(typeof multiply).toBe('function');
   });
 
-  it('multiplies 3 and 4 to get 12', () => {
+  it('multiply(3, 4) === 12', () => {
     expect(multiply(3, 4)).toBe(12);
   });
 });
