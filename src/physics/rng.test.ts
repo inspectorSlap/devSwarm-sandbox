@@ -1,3 +1,24 @@
-import { it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { createRng } from './rng';
 
-it.todo('stub — seeded by the Director (S10.13); the worker implements this');
+function draw(seed: number, n: number): number[] {
+  const rand = createRng(seed);
+  return Array.from({ length: n }, () => rand());
+}
+
+describe('createRng', () => {
+  it('rng-determinism: same seed yields identical sequences', () => {
+    expect(draw(42, 100)).toEqual(draw(42, 100));
+  });
+
+  it('rng-variation: different seeds yield different sequences', () => {
+    expect(draw(1, 20)).not.toEqual(draw(2, 20));
+  });
+
+  it('produces values in [0, 1)', () => {
+    for (const v of draw(7, 1000)) {
+      expect(v).toBeGreaterThanOrEqual(0);
+      expect(v).toBeLessThan(1);
+    }
+  });
+});
