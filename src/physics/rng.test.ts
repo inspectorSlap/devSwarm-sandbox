@@ -21,4 +21,16 @@ describe('createRng', () => {
       expect(v).toBeLessThan(1);
     }
   });
+
+  it('qa-rng-negative-and-fractional-seeds: non-canonical seeds still produce finite, in-range, deterministic sequences', () => {
+    for (const seed of [-1, -42, 3.7, -0]) {
+      const values = draw(seed, 50);
+      expect(draw(seed, 50)).toEqual(values);
+      for (const v of values) {
+        expect(Number.isNaN(v)).toBe(false);
+        expect(v).toBeGreaterThanOrEqual(0);
+        expect(v).toBeLessThan(1);
+      }
+    }
+  });
 });

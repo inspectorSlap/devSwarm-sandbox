@@ -37,6 +37,61 @@ describe('placeTargets', () => {
   it('returns an empty array for count 0', () => {
     expect(placeTargets(5, 0, bounds)).toEqual([]);
   });
+
+  it('qa-empty-inputs: count 0 never throws and always returns an empty array, regardless of bounds', () => {
+    expect(() => placeTargets(123, 0, bounds)).not.toThrow();
+    expect(placeTargets(123, 0, bounds)).toEqual([]);
+    expect(placeTargets(123, 0, { width: 0, height: 0 })).toEqual([]);
+  });
+
+  it('qa-tiny-bounds: a bounds box much smaller than typical target sizes still yields finite, in-bounds, non-degenerate targets', () => {
+    const tinyBounds = { width: 1, height: 1 };
+    const targets = placeTargets(7, 20, tinyBounds);
+
+    expect(targets).toHaveLength(20);
+    for (const t of targets) {
+      expect(extentsWithin(t, tinyBounds.width, tinyBounds.height)).toBe(true);
+      if (t.kind === 'circle') {
+        expect(Number.isFinite(t.x)).toBe(true);
+        expect(Number.isFinite(t.y)).toBe(true);
+        expect(Number.isFinite(t.radius)).toBe(true);
+        expect(t.radius).toBeGreaterThan(0);
+      } else {
+        expect(Number.isFinite(t.x)).toBe(true);
+        expect(Number.isFinite(t.y)).toBe(true);
+        expect(Number.isFinite(t.width)).toBe(true);
+        expect(Number.isFinite(t.height)).toBe(true);
+        expect(t.width).toBeGreaterThan(0);
+        expect(t.height).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('qa-degenerate-bounds: a zero-area bounds box never produces NaN or Infinity targets', () => {
+    const zeroBounds = { width: 0, height: 0 };
+    const targets = placeTargets(11, 15, zeroBounds);
+
+    expect(targets).toHaveLength(15);
+    for (const t of targets) {
+      if (t.kind === 'circle') {
+        expect(Number.isNaN(t.x)).toBe(false);
+        expect(Number.isNaN(t.y)).toBe(false);
+        expect(Number.isNaN(t.radius)).toBe(false);
+        expect(Number.isFinite(t.x)).toBe(true);
+        expect(Number.isFinite(t.y)).toBe(true);
+        expect(Number.isFinite(t.radius)).toBe(true);
+      } else {
+        expect(Number.isNaN(t.x)).toBe(false);
+        expect(Number.isNaN(t.y)).toBe(false);
+        expect(Number.isNaN(t.width)).toBe(false);
+        expect(Number.isNaN(t.height)).toBe(false);
+        expect(Number.isFinite(t.x)).toBe(true);
+        expect(Number.isFinite(t.y)).toBe(true);
+        expect(Number.isFinite(t.width)).toBe(true);
+        expect(Number.isFinite(t.height)).toBe(true);
+      }
+    }
+  });
 });
 
 describe('hitsTarget circle', () => {

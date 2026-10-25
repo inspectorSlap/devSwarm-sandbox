@@ -32,6 +32,17 @@ describe('scoreRun', () => {
     expect(scoreRun([], targets)).toEqual({ hitIndices: [], hitCount: 0 });
   });
 
+  it('qa-empty-inputs: an empty trajectory against zero targets yields a sane zero-count result without throwing', () => {
+    expect(() => scoreRun([], [])).not.toThrow();
+    expect(scoreRun([], [])).toEqual({ hitIndices: [], hitCount: 0 });
+  });
+
+  it('qa-empty-inputs: a non-empty trajectory against zero targets yields a sane empty result without throwing', () => {
+    const trajectory = [ball(0, 0), ball(10, 10), ball(500, 500)];
+    expect(() => scoreRun(trajectory, [])).not.toThrow();
+    expect(scoreRun(trajectory, [])).toEqual({ hitIndices: [], hitCount: 0 });
+  });
+
   it('score-run-purity: inputs are unchanged after scoring', () => {
     const trajectory = [ball(10, 10), ball(55, 55)];
     const targetsCopy = structuredClone(targets);

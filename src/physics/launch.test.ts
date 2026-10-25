@@ -40,4 +40,22 @@ describe('launchVelocity', () => {
     expect(Number.isNaN(v.x)).toBe(false);
     expect(Number.isNaN(v.y)).toBe(false);
   });
+
+  it('qa-launch-maxspeed-boundary: a speed exactly equal to maxSpeed is left unscaled (only strictly greater speeds are clamped)', () => {
+    const boundaryWorld: World = { ...world, maxSpeed: 100 };
+    // drag of (60, 80) at power 1 => speed exactly 100.
+    const v = launchVelocity({ x: 0, y: 0 }, { x: 60, y: 80 }, 1, boundaryWorld);
+    const speed = Math.hypot(v.x, v.y);
+    expect(speed).toBeCloseTo(100, 9);
+    expect(v.x).toBeCloseTo(-60, 9);
+    expect(v.y).toBeCloseTo(-80, 9);
+  });
+
+  it('qa-launch-negative-power: a negative power flips the direction but still clamps to maxSpeed without NaN', () => {
+    const v = launchVelocity({ x: 0, y: 0 }, { x: 10, y: 0 }, -500, world);
+    expect(Number.isNaN(v.x)).toBe(false);
+    expect(Number.isNaN(v.y)).toBe(false);
+    const speed = Math.hypot(v.x, v.y);
+    expect(speed).toBeLessThanOrEqual(world.maxSpeed + 1e-9);
+  });
 });
